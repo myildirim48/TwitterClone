@@ -9,11 +9,13 @@ import SwiftUI
 
 struct NewTweetView: View {
     @State private var caption = ""
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         VStack {
             HStack {
                 Button {
-                    print("Dissmis")
+                    dismiss()
                 } label: {
                     Text("Cancel")
                         .foregroundColor(Color(.systemBlue))
@@ -22,7 +24,7 @@ struct NewTweetView: View {
                 Spacer()
                 
                 Button {
-                    print("Dissmis")
+//                    new tweet
                 } label: {
                     Text("Tweet")
                         .bold()
