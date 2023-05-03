@@ -10,6 +10,8 @@ import SwiftUI
 struct NewTweetView: View {
     @State private var caption = ""
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var viewModel = NewTweetViewModel()
     
     var body: some View {
         VStack {
@@ -24,7 +26,7 @@ struct NewTweetView: View {
                 Spacer()
                 
                 Button {
-//                    new tweet
+                    viewModel.uploadTweet(withCaption: caption)
                 } label: {
                     Text("Tweet")
                         .bold()
@@ -35,14 +37,19 @@ struct NewTweetView: View {
                         .clipShape(Capsule())
                 }
 
-            }
+            }.padding()
             HStack(alignment: .top) {
-                Circle()
-                    .frame(width: 64, height: 64)
+                if let user = authViewModel.currentUser {
+                    LoadableImage(imgUrl: user.profileImageUrl,size: 64)
+                }
                 
                 TextArea(placeholder: "What's happening?", text: $caption)
                 
             }.padding()
+        }.onReceive(viewModel.$didUploadTweet) { success in
+            if success{
+                dismiss()
+            }
         }
     }
 }

@@ -11,11 +11,15 @@ import Firebase
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var didAuthenticateUser = false
+    @Published var currentUser: User?
+    
+    private var tempUserSessions: FirebaseAuth.User?
+    private let service = UserService()
     
     init() {
         self.userSession = Auth.auth().currentUser
+        self.fetchUser()
     }
-    
     
     func login(withEmail email: String, password: String){
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
@@ -26,6 +30,7 @@ class AuthViewModel: ObservableObject {
             
             guard let user = result?.user else { return }
             self.userSession = user
+            self.fetchUser()
         }
     }
     
@@ -37,7 +42,7 @@ class AuthViewModel: ObservableObject {
             }
             
             guard let user = result?.user else { return }
-//            self.userSession = user
+            self.tempUserSessions = user
             
             let data = ["email" : email,
                         "username" : username.lowercased(),
@@ -57,5 +62,30 @@ class AuthViewModel: ObservableObject {
         userSession = nil
         didAuthenticateUser = false
         try? Auth.auth().signOut()
+    }
+    
+    //MARK: -  Helper for image upload
+    
+    func uploadProfileImage(_ image: UIImage) {
+        guard let uid = tempUserSessions?.uid else { return }
+        
+        ImageUploader.uploadImage(image: image) { profileImageUrl in
+            Firestore.firestore().collection("users")
+                .document(uid)
+                .updateData(["profileImageUrl" : profileImageUrl]) { _ in
+                    self.fetchUser()
+                    self.userSession = self.tempUserSessions
+                }
+        }
+    }
+    
+    //MARK: - Fetch user
+    
+    func fetchUser() {
+        guard let uid = self.userSession?.uid else { return }
+        
+        service.fethUser(withUid: uid) { user in
+            self.currentUser = user
+        }
     }
 }

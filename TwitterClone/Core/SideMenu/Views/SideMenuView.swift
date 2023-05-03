@@ -10,17 +10,18 @@ import SwiftUI
 struct SideMenuView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     var body: some View {
-
+        if let user = authViewModel.currentUser {
+            
         VStack(alignment: .leading,spacing: 32) {
             VStack(alignment: .leading) {
-                Circle()
-                    .frame(width: 48, height: 48)
+                 
+                LoadableImage(imgUrl: user.profileImageUrl)
                 
                 VStack(alignment: .leading,spacing: 4) {
-                    Text("Bruce Wayne")
+                    Text(user.fullname)
                         .font(.headline)
                     
-                    Text("@batman")
+                    Text("@\(user.username)")
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
@@ -29,14 +30,14 @@ struct SideMenuView: View {
                     .padding(.vertical)
             }.padding(.leading)
             
-//            List
+            //            List
             
             ForEach(SideMenuViewModel.allCases, id:\.rawValue) { item in
                 
                 if item == .profile {
                     NavigationLink {
-                        ProfileView()
-                            
+                        ProfileView(user: user)
+                        
                     } label: {
                         SideMenuOptionRowView(item: item)
                     }
@@ -46,7 +47,7 @@ struct SideMenuView: View {
                     } label: {
                         SideMenuOptionRowView(item: item)
                     }
-
+                    
                 }else {
                     SideMenuOptionRowView(item: item)
                 }
@@ -57,6 +58,7 @@ struct SideMenuView: View {
             Spacer()
         }
     }
+    }
 }
 
 struct SideMenuView_Previews: PreviewProvider {
@@ -66,3 +68,4 @@ struct SideMenuView_Previews: PreviewProvider {
         }
     }
 }
+

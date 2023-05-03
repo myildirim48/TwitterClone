@@ -67,10 +67,11 @@ struct ContentView_Previews: PreviewProvider {
                     visibility = .hidden
                         
                 } label: {
-                    Circle()
-                        .frame(width: 32, height: 32)
+                    if let user = viewModel.currentUser {
+                        LoadableImage(imgUrl: user.profileImageUrl, size: 36)
+                            .padding(.leading,8)
+                    }
                 }
-
             }
         }
         .onAppear(perform: {

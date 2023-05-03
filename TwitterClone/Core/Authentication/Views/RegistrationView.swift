@@ -17,11 +17,12 @@ struct RegistrationView: View {
     var body: some View {
         
         
+
         NavigationStack{
         VStack {
-            
+
             AuthenticationHeaderView(title1: "Get started.", title2: "Create your account")
-            
+
             VStack(spacing: 40) {
                 CustomInputField(imageName: "envelope",
                                  placeholderText: "Email",
@@ -36,15 +37,15 @@ struct RegistrationView: View {
                                  placeholderText: "Password",
                                  text: $password,
                                  isSecureField: true)
-                
+
             }.padding(32)
-            
+
             Button {
                 viewModel.register(withEmail: email,
                                    password: password,
                                    fullname: fullname,
                                    username: username)
-           
+
             } label: {
                 Text("Sign Up")
                     .font(.headline)
@@ -55,16 +56,16 @@ struct RegistrationView: View {
                     .padding()
             }
             .shadow(color: .gray.opacity(0.5), radius: 10)
-            
+
             Spacer()
-            
+
             Button {
                 dissmis()
             } label: {
                 HStack {
                     Text("Already have an account?")
                         .font(.footnote)
-                    
+
                     Text("Sign Up")
                         .font(.footnote)
                         .fontWeight(.semibold)
@@ -72,7 +73,7 @@ struct RegistrationView: View {
             }.padding(.bottom)
         }
         .ignoresSafeArea()
-        
+
         .navigationDestination(isPresented: $viewModel.didAuthenticateUser) {
             ProfilePhotoSelectView()
         }
